@@ -52,11 +52,17 @@ public class TaskController {
     }
 
     // Delete a Task
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
-        taskService.deleteTask(id);
-        return ResponseEntity.noContent().build();
-    }
+        Optional<Task> taskOptional = taskService.getTaskById(id);  // Check if task exists by ID
 
+        if (taskOptional.isPresent()) {
+            taskService.deleteTask(id);  // Delete task if it exists
+            return ResponseEntity.noContent().build();  // Return 204 No Content
+        } else {
+            return ResponseEntity.notFound().build();  // Return 404 Not Found if task doesn't exist
+        }
+    }
 
     // Mark a task as complete/incomplete
     @PatchMapping("/{id}/complete")
